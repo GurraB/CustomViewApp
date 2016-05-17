@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="VisualSchedule">
+        <attr name="one" format="integer" />
+        <attr name="two" format="integer" />
+        <attr name="three" format="integer" />
+    </declare-styleable>
+</resources>
