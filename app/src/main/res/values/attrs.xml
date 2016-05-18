@@ -1,8 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <declare-styleable name="VisualSchedule">
-        <attr name="one" format="integer" />
-        <attr name="two" format="integer" />
-        <attr name="three" format="integer" />
+        <attr name="backgroundColor" format="color" />
+        <attr name="stampColor" format="color" />
+        <attr name="scheduleColor" format="color" />
+        <attr name="lineColor" format="color" />
+        <attr name="textColor" format="color" />
+        <attr name="hourHeight" format="float" />
+        <attr name="textSize" format="float" />
+        <attr name="TitleTextSize" format="float" />
+        <attr name="sideBarWidth" format="float" />
     </declare-styleable>
 </resources>

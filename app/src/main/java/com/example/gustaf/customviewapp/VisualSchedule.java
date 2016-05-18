@@ -2,12 +2,13 @@ package com.example.gustaf.customviewapp;
 
 import android.content.Context;
 import android.content.res.TypedArray;
-import android.graphics.BlurMaskFilter;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.util.AttributeSet;
 import android.util.Log;
+import android.view.GestureDetector;
+import android.view.MotionEvent;
 import android.view.View;
 
 import java.util.ArrayList;
@@ -20,29 +21,29 @@ public class VisualSchedule extends View {
 
     private final String TAG = "VisualSchedule";
     private ArrayList<GraphEvent> events = new ArrayList<>();
+    private GestureDetector mDetector;
     private Calendar day;
 
-    private int mBackgroundColor;
-    private int mStampColor;
-    private int mScheduleColor = Color.CYAN;
-    private int mHourLineColor;
-    private int mHeaderTextColor;
-    private int mPrimaryTextColor = Color.DKGRAY;
-    private int mTimeStampColor = Color.BLUE;
+    private int mBackgroundColor = Color.rgb(238, 238, 238);
+    private int mStampColor = Color.argb(128, 212, 225, 87);
+    private int mScheduleColor = Color.rgb(38, 166, 154);
+    private int mLineColor = Color.argb(128, 33, 33, 33);
+    private int mPrimaryTextColor = Color.rgb(0, 0, 0);
+    private int mTitleTextColor = Color.rgb(255, 255, 255);
+
+    private float mHourHeight = 100;
+    private float mTextSize = 25;
+    private float mTitleTextSize = 20;
+    private float mSidebarWidth = 100;
 
     private Paint mBackgroundPaint;
     private Paint mLinePaint;
     private Paint mPrimaryTextPaint;
-    private Paint mShadowPaint;
     private Paint mEventPaint;
-
-    private float mTextHeight = 25;
-    private float mSidebarWidth = 100;
+    private Paint mTitleTextPaint;
 
     private float mWidth;
     private float mHeight;
-
-    private float mHourHeight = 100;
 
 
     public VisualSchedule(Context context) {
@@ -53,9 +54,15 @@ public class VisualSchedule extends View {
         super(context, attrs);
         TypedArray array = context.getTheme().obtainStyledAttributes(attrs, R.styleable.VisualSchedule, 0, 0);
         try {
-            mBackgroundColor = array.getInt(R.styleable.VisualSchedule_one, Color.GRAY);
-            mStampColor = array.getInt(R.styleable.VisualSchedule_two, 0);
-            mScheduleColor = array.getInt(R.styleable.VisualSchedule_three, 0);
+            mBackgroundColor = array.getColor(R.styleable.VisualSchedule_backgroundColor, mBackgroundColor);
+            mStampColor = array.getColor(R.styleable.VisualSchedule_stampColor, mStampColor);
+            mScheduleColor = array.getColor(R.styleable.VisualSchedule_scheduleColor, mScheduleColor);
+            mLineColor = array.getColor(R.styleable.VisualSchedule_lineColor, mLineColor);
+            mPrimaryTextColor = array.getColor(R.styleable.VisualSchedule_textColor, mPrimaryTextColor);
+
+            mHourHeight = array.getFloat(R.styleable.VisualSchedule_hourHeight, mHourHeight);
+            mTextSize = array.getFloat(R.styleable.VisualSchedule_textSize, mTextSize);
+            mSidebarWidth = array.getFloat(R.styleable.VisualSchedule_sideBarWidth, mSidebarWidth);
         } finally {
             array.recycle();
         }
@@ -70,41 +77,78 @@ public class VisualSchedule extends View {
         super(context, attrs, defStyleAttr, defStyleRes);
     }
 
+    class mListener extends GestureDetector.SimpleOnGestureListener {
+        @Override
+        public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX, float distanceY) {
+            return super.onScroll(e1, e2, distanceX, distanceY);
+        }
+
+        @Override
+        public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
+            return super.onFling(e1, e2, velocityX, velocityY);
+        }
+
+        @Override
+        public boolean onDown(MotionEvent e) {
+            Log.v(TAG, "onDown");
+            return true;
+        }
+    }
+
+    @Override
+    public boolean onTouchEvent(MotionEvent event) {
+        boolean result = mDetector.onTouchEvent(event);
+        if(!result) {
+            if(event.getAction() == MotionEvent.ACTION_UP) {
+                stopScrolling();
+                result = true;
+            }
+        }
+        return result;
+    }
+
+    private void stopScrolling() {
+
+    }
+
     private void init() {
+        mDetector = new GestureDetector(this.getContext(), new mListener());
         mBackgroundPaint = createBackgroundPaint();
         mPrimaryTextPaint = createPrimaryTextPaint();
-        mShadowPaint = createShadowPaint();
         mLinePaint = createLinePaint();
         mEventPaint = createEventPaint();
+        mTitleTextPaint = createTitleTextPaint();
     }
 
     private Paint createBackgroundPaint() {
         Paint paint = new Paint(Paint.ANTI_ALIAS_FLAG);
-        paint.setColor(Color.WHITE);
+        paint.setColor(mBackgroundColor);
         return paint;
     }
     private Paint createPrimaryTextPaint() {
         Paint paint = new Paint(Paint.ANTI_ALIAS_FLAG);
         paint.setStyle(Paint.Style.FILL);
         paint.setColor(mPrimaryTextColor);
-        paint.setTextSize(mTextHeight);
-        return paint;
-    }
-    private Paint createShadowPaint() {
-        Paint paint = new Paint(0);
-        paint.setColor(0xff101010);
-        paint.setMaskFilter(new BlurMaskFilter(8, BlurMaskFilter.Blur.NORMAL));
+        paint.setTextSize(mTextSize);
         return paint;
     }
     private Paint createLinePaint() {
         Paint paint = new Paint(Paint.ANTI_ALIAS_FLAG);
-        paint.setColor(mHourLineColor);
-        paint.setStrokeWidth(1);
+        paint.setColor(mLineColor);
+        paint.setStyle(Paint.Style.FILL);
         return paint;
     }
     private Paint createEventPaint() {
         Paint paint = new Paint(Paint.ANTI_ALIAS_FLAG);
-        paint.setColor(mTimeStampColor);
+        paint.setColor(mStampColor);
+        paint.setStyle(Paint.Style.FILL);
+        return paint;
+    }
+    private Paint createTitleTextPaint() {
+        Paint paint = new Paint(Paint.ANTI_ALIAS_FLAG);
+        paint.setColor(mTitleTextColor);
+        paint.setTextSize(mTitleTextSize);
+        paint.setStyle(Paint.Style.FILL);
         return paint;
     }
 
@@ -115,13 +159,13 @@ public class VisualSchedule extends View {
         float ypad = (float)(getPaddingTop() + getPaddingBottom());
 
         mWidth = w - xpad;
-        mHeight = mHourHeight * 24 + mTextHeight;
+        mHeight = (mHourHeight * 24) + mTextSize + ypad;
     }
 
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
         super.onMeasure(widthMeasureSpec, heightMeasureSpec);
-        setMeasuredDimension(widthMeasureSpec, (int) mHeight + (int) mTextHeight);
+        setMeasuredDimension(widthMeasureSpec, (int) mHeight);
     }
 
     @Override
@@ -136,20 +180,19 @@ public class VisualSchedule extends View {
     }
 
     private void drawBackground(Canvas canvas) {
-        canvas.drawRect(0, 0, mWidth, mHeight + mTextHeight, mBackgroundPaint);
+        canvas.drawRect(0, 0, mWidth, mHeight, mBackgroundPaint);
     }
 
     private void drawSidebar(Canvas canvas) {
         for (int i = 0; i < 25; i++) {
-            canvas.drawText((i < 10 ? "0" + i : i) + ":00", 10, mHourHeight * i + mTextHeight, mPrimaryTextPaint);
+            canvas.drawText((i < 10 ? "0" + i : i) + ":00", 10, (mHourHeight * i) + mTextSize, mPrimaryTextPaint);
         }
-        canvas.drawLine(mSidebarWidth, 0, mSidebarWidth, mHeight + mTextHeight, mPrimaryTextPaint);
     }
 
     private void drawHourLines(Canvas canvas) {
         for (int i = 0; i < 25; i++) {
-            float y = mHourHeight * i + mTextHeight + 1;
-            canvas.drawLine(mSidebarWidth, y, mWidth, y, mPrimaryTextPaint);
+            float y = (mHourHeight * i) + (mTextSize / 2);
+            canvas.drawLine(mSidebarWidth, y, mWidth, y, mLinePaint);
         }
     }
 
@@ -166,21 +209,25 @@ public class VisualSchedule extends View {
             int startMinute = (startTime.get(Calendar.HOUR_OF_DAY) * 60) + startTime.get(Calendar.MINUTE);
             int endMinute = (startTime.get(Calendar.DAY_OF_YEAR) < endTime.get(Calendar.DAY_OF_YEAR) ? 1440 : (endTime.get(Calendar.HOUR_OF_DAY) * 60) + endTime.get(Calendar.MINUTE));
             Log.v(TAG, "start, end: " + startMinute + ", " + endMinute);
-            float startY = startMinute * (mHourHeight / 60) + mTextHeight;
-            float endY = endMinute * (mHourHeight / 60) + mTextHeight;
+            float startY = startMinute * (mHourHeight / 60) + (mTextSize / 2);
+            float endY = endMinute * (mHourHeight / 60) + mTextSize;
             if(event.isStamp())
                 mEventPaint.setColor(mStampColor);
             else
                 mEventPaint.setColor(mScheduleColor);
-            mEventPaint.setColor(Color.BLUE);
             Log.v(TAG, "startX: " + mSidebarWidth + "\nstartY: " + startY + "\nwidth: " + widthPerDay / 2 + "\nendY: " + endY + "\nColor = BLUE: " + String.valueOf(mEventPaint.getColor() == Color.BLUE));
             canvas.drawRect(mSidebarWidth, startY, widthPerDay / 2 + mSidebarWidth, endY, mEventPaint);
-            drawTitle();
+            drawTitle(event, mSidebarWidth, startY + mTitleTextSize, widthPerDay / 2 + mSidebarWidth, endY, canvas);
         }
     }
 
-    private void drawTitle() {
-
+    private void drawTitle(GraphEvent event, float startX, float startY, float endX, float endY, Canvas canvas) {
+        if((endY - startY) - (mTitleTextSize - 4) < 0) return;
+        String start = event.getTitle().substring(0, event.getTitle().indexOf('-'));
+        String end = event.getTitle().substring(event.getTitle().indexOf('-') + 1, event.getTitle().length());
+        Log.v(TAG, end);
+        canvas.drawText(start, startX, startY, mTitleTextPaint);
+        canvas.drawText(end, endX - (float)(mTitleTextSize * 2.5) - 2, endY - 4, mTitleTextPaint);
     }
 
 

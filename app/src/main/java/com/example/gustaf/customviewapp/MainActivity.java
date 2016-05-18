@@ -16,8 +16,8 @@ public class MainActivity extends AppCompatActivity {
         final ArrayList<GraphEvent> events = new ArrayList<>();
         Calendar start = Calendar.getInstance();
         Calendar end = Calendar.getInstance();
-        end.set(Calendar.HOUR_OF_DAY, start.get(Calendar.HOUR_OF_DAY) + 2);
-        GraphEvent event = new GraphEvent(start.getTimeInMillis(), end.getTimeInMillis(), true);
+        end.set(Calendar.MINUTE, start.get(Calendar.MINUTE) + 25);
+        GraphEvent event = new GraphEvent(start.getTimeInMillis(), end.getTimeInMillis(), true, "19:30-21:30");
         events.add(event);
         final VisualSchedule vs = (VisualSchedule) findViewById(R.id.schedule);
         vs.notifyDataChanged(events);
