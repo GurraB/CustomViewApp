@@ -12,6 +12,6 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             app:backgroundColor="@color/accent_material_light"
-            app:stampColor="@color/colorPrimary"/>
+            app:stampColor="@color/colorPrimary" />
     </RelativeLayout>
 </ScrollView>

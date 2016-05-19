@@ -5,11 +5,14 @@ import android.content.res.TypedArray;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.os.UserManager;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.animation.AccelerateDecelerateInterpolator;
+import android.widget.Scroller;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -21,7 +24,6 @@ public class VisualSchedule extends View {
 
     private final String TAG = "VisualSchedule";
     private ArrayList<GraphEvent> events = new ArrayList<>();
-    private GestureDetector mDetector;
     private Calendar day;
 
     private int mBackgroundColor = Color.rgb(238, 238, 238);
@@ -77,42 +79,7 @@ public class VisualSchedule extends View {
         super(context, attrs, defStyleAttr, defStyleRes);
     }
 
-    class mListener extends GestureDetector.SimpleOnGestureListener {
-        @Override
-        public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX, float distanceY) {
-            return super.onScroll(e1, e2, distanceX, distanceY);
-        }
-
-        @Override
-        public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
-            return super.onFling(e1, e2, velocityX, velocityY);
-        }
-
-        @Override
-        public boolean onDown(MotionEvent e) {
-            Log.v(TAG, "onDown");
-            return true;
-        }
-    }
-
-    @Override
-    public boolean onTouchEvent(MotionEvent event) {
-        boolean result = mDetector.onTouchEvent(event);
-        if(!result) {
-            if(event.getAction() == MotionEvent.ACTION_UP) {
-                stopScrolling();
-                result = true;
-            }
-        }
-        return result;
-    }
-
-    private void stopScrolling() {
-
-    }
-
     private void init() {
-        mDetector = new GestureDetector(this.getContext(), new mListener());
         mBackgroundPaint = createBackgroundPaint();
         mPrimaryTextPaint = createPrimaryTextPaint();
         mLinePaint = createLinePaint();
@@ -264,7 +231,9 @@ public class VisualSchedule extends View {
     }
 
 
-//TODO----------------------------------------------------------------------------------------------------------------------------------------------------------------------
+    /****************************************************************
+     *                          Variables                           *
+     ****************************************************************/
 
     public int getmBackgroundColor() {
         return mBackgroundColor;
@@ -278,5 +247,78 @@ public class VisualSchedule extends View {
 
     public void setDay(Calendar day) {
         this.day = day;
+        invalidate();
+    }
+
+    public int getmStampColor() {
+        return mStampColor;
+    }
+
+    public void setmStampColor(int mStampColor) {
+        this.mStampColor = mStampColor;
+    }
+
+    public int getmScheduleColor() {
+        return mScheduleColor;
+    }
+
+    public void setmScheduleColor(int mScheduleColor) {
+        this.mScheduleColor = mScheduleColor;
+    }
+
+    public int getmLineColor() {
+        return mLineColor;
+    }
+
+    public void setmLineColor(int mLineColor) {
+        this.mLineColor = mLineColor;
+    }
+
+    public int getmPrimaryTextColor() {
+        return mPrimaryTextColor;
+    }
+
+    public void setmPrimaryTextColor(int mPrimaryTextColor) {
+        this.mPrimaryTextColor = mPrimaryTextColor;
+    }
+
+    public int getmTitleTextColor() {
+        return mTitleTextColor;
+    }
+
+    public void setmTitleTextColor(int mTitleTextColor) {
+        this.mTitleTextColor = mTitleTextColor;
+    }
+
+    public float getmHourHeight() {
+        return mHourHeight;
+    }
+
+    public void setmHourHeight(float mHourHeight) {
+        this.mHourHeight = mHourHeight;
+    }
+
+    public float getmTextSize() {
+        return mTextSize;
+    }
+
+    public void setmTextSize(float mTextSize) {
+        this.mTextSize = mTextSize;
+    }
+
+    public float getmSidebarWidth() {
+        return mSidebarWidth;
+    }
+
+    public void setmSidebarWidth(float mSidebarWidth) {
+        this.mSidebarWidth = mSidebarWidth;
+    }
+
+    public float getmTitleTextSize() {
+        return mTitleTextSize;
+    }
+
+    public void setmTitleTextSize(float mTitleTextSize) {
+        this.mTitleTextSize = mTitleTextSize;
     }
 }

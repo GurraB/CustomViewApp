@@ -12,21 +12,17 @@
         android:textAlignment="center"
         android:editable="false"/>
 
-    <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
-        android:id="@+id/android:list"
-        android:layout_width="fill_parent"
+    <ScrollView
+        android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_below="@id/etDate">
-
-        <LinearLayout
-            android:id="@+id/scrollBody"
-            android:layout_width="fill_parent"
+        <com.example.gustaf.customviewapp.VisualSchedule
+            android:id="@+id/schedule"
+            android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:orientation="vertical">
-
-            <include layout="@layout/customview_layout" />
-
-        </LinearLayout>
-
+            app:backgroundColor="@color/accent_material_light"
+            app:stampColor="@color/colorPrimary"
+            app:hourHeight="75"/>
     </ScrollView>
+
 </RelativeLayout>
